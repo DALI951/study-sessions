@@ -52,7 +52,8 @@ jobs:
       - name: Stage APK
         run: |
           mkdir -p dist
-          APK=$(find "$GITHUB_WORKSPACE" -type f -name 'app-debug.apk' | head -n 1)
+          APK=$(find "$GITHUB_WORKSPACE" -type f -name '*.apk' | head -n 1)
+          echo "Built APK: $APK"
           test -n "$APK"
           cp "$APK" dist/study-sessions-v1.0.0.apk
           ls -lh dist/study-sessions-v1.0.0.apk
