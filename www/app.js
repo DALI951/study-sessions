@@ -9,6 +9,7 @@
   var today = C.todayKey();
   var cal = new Date(Number(today.slice(0, 4)), Number(today.slice(5, 7)) - 1, 1);
   var activeSubjectId = null;
+  var pendingConfirm = null;
   var toastTimer = null;
 
   function $(id) { return document.getElementById(id); }
@@ -160,6 +161,15 @@
     activeSubjectId = null;
   }
 
+  /* WebView JS dialogs need a WebChromeClient; use our own themed sheet instead. */
+  function askConfirm(message, onYes) {
+    pendingConfirm = onYes;
+    openSheet('Please confirm',
+      '<p class="sheet-note" style="margin-top:0">' + esc(message) + '</p>' +
+      '<button class="btn btn-primary" type="button" data-action="confirm-yes">Yes, continue</button>' +
+      '<button class="btn btn-secondary" type="button" data-action="confirm-no">Cancel</button>');
+  }
+
   function subjectOptions(selected) {
     if (!data.subjects.length) return '';
     return data.subjects.map(function (s) {
@@ -281,28 +291,39 @@
     var action = el.getAttribute('data-action');
     var id = el.getAttribute('data-id');
     try {
-      if (action === 'open-subject') {
+      if (action === 'confirm-yes') {
+        var yes = pendingConfirm;
+        pendingConfirm = null;
+        closeSheet();
+        if (yes) yes();
+        return;
+      } else if (action === 'confirm-no') {
+        pendingConfirm = null;
+        closeSheet();
+        return;
+      } else if (action === 'open-subject') {
         openDetailSheet(id);
       } else if (action === 'new-subject') {
         openSubjectSheet();
       } else if (action === 'log-for-subject') {
-        openSessionSheet(activeSubjectId);
+        var logId = activeSubjectId;
+        openSessionSheet(logId);
       } else if (action === 'rename-subject') {
         openRenameSheet(activeSubjectId);
       } else if (action === 'delete-subject') {
-        if (window.confirm('Delete this subject and all of its sessions?')) {
+        askConfirm('Delete this subject and all of its sessions?', function () {
           C.deleteSubject(data, id);
           persist();
-          closeSheet();
           toast('Subject deleted');
-        }
+        });
       } else if (action === 'delete-session') {
-        if (window.confirm('Delete this session?')) {
+        var hostId = activeSubjectId;
+        askConfirm('Delete this session?', function () {
           C.deleteSession(data, id);
           persist();
-          if (activeSubjectId) openDetailSheet(activeSubjectId);
+          if (hostId) openDetailSheet(hostId);
           toast('Session deleted');
-        }
+        });
       } else if (action === 'pick-day') {
         selectedDate = el.getAttribute('data-date');
         renderCalendar();
@@ -319,21 +340,22 @@
       } else if (action === 'import-backup') {
         var text = $('import-text').value;
         if (!text.trim()) { toast('Paste a backup first'); return; }
-        if (!window.confirm('Replace everything with this backup?')) return;
         var restored = C.importData(text);
-        data.subjects = restored.subjects;
-        data.sessions = restored.sessions;
-        persist();
-        closeSheet();
-        toast('Backup restored');
+        askConfirm('Replace everything with this backup?', function () {
+          data.subjects = restored.subjects;
+          data.sessions = restored.sessions;
+          persist();
+          toast('Backup restored');
+        });
       } else if (action === 'erase-all') {
-        if (!window.confirm('Erase every subject and session? This cannot be undone.')) return;
-        if (!window.confirm('Are you sure? Your backup is the only way back.')) return;
-        data.subjects = [];
-        data.sessions = [];
-        persist();
-        closeSheet();
-        toast('Everything erased');
+        askConfirm('Erase every subject and session? This cannot be undone.', function () {
+          askConfirm('Are you sure? Your backup is the only way back.', function () {
+            data.subjects = [];
+            data.sessions = [];
+            persist();
+            toast('Everything erased');
+          });
+        });
       }
     } catch (err) {
       toast(err && err.message ? err.message : 'Something went wrong');

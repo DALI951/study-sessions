@@ -39,3 +39,4 @@ Binding for this repo. If it conflicts with a default, this file wins.
 - 2026-11-21: release asset is always `study-sessions-v1.0.0.apk` on tag `v1.0.0`; CI re-uploads with `--clobber` so the link never changes.
 - 2026-11-21: debug-signed APK. Updating later requires reinstall unless signing secrets are added (then update this line).
 - 2026-11-21: data is local-only; Backup sheet exports/imports JSON manually. No sync, no cloud.
+- 2026-11-21: never use `window.confirm`/`alert` — a WebView without a WebChromeClient drops them. Confirmations are themed sheets in `app.js`.
