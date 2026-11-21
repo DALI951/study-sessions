@@ -1,0 +1,10 @@
+{
+  "name": "study-sessions",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Offline Android study-session tracker: subjects, sessions, calendar.",
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "icons": "node scripts/gen-icons.mjs"
+  }
+}

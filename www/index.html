@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f6f2ea">
+  <title>Study Log</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <span class="mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none">
+            <rect x="4" y="5" width="10" height="22" rx="3" fill="currentColor" opacity=".22"/>
+            <rect x="16" y="5" width="10" height="22" rx="3" fill="currentColor" opacity=".22"/>
+            <path d="M9 11h3M19 11h3M19 16h3" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <div class="brand-text">
+          <h1>Study Log</h1>
+          <p id="today-label">—</p>
+        </div>
+      </div>
+      <button id="data-btn" class="icon-btn" type="button" aria-label="Backup and data" title="Backup and data">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <ellipse cx="12" cy="5.5" rx="8" ry="3"></ellipse>
+          <path d="M4 5.5v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"></path>
+          <path d="M4 11.5v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"></path>
+        </svg>
+      </button>
+    </header>
+
+    <section class="summary" aria-label="Overview">
+      <div class="stat"><span class="stat-value" id="stat-total">0</span><span class="stat-label">sessions</span></div>
+      <div class="stat"><span class="stat-value" id="stat-week">0</span><span class="stat-label">this week</span></div>
+      <div class="stat"><span class="stat-value" id="stat-streak">0</span><span class="stat-label">day streak</span></div>
+    </section>
+
+    <main class="content">
+      <section id="view-subjects" class="view">
+        <div class="section-head">
+          <div>
+            <h2>Subjects</h2>
+            <p class="section-sub">Tap a subject to see its sessions.</p>
+          </div>
+        </div>
+        <div id="subject-list" class="card-list"></div>
+        <button id="add-subject-btn" class="add-subject" type="button">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          Add a subject
+        </button>
+      </section>
+
+      <section id="view-calendar" class="view" hidden>
+        <div class="section-head calendar-head">
+          <div>
+            <h2 id="month-label">—</h2>
+            <p class="section-sub">A dot means you studied that day.</p>
+          </div>
+          <div class="month-nav">
+            <button id="prev-month" class="icon-btn" type="button" aria-label="Previous month">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <button id="next-month" class="icon-btn" type="button" aria-label="Next month">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="calendar" role="grid" aria-label="Study calendar">
+          <div class="weekdays" aria-hidden="true"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+          <div id="calendar-grid" class="calendar-grid"></div>
+        </div>
+        <div class="day-panel">
+          <div class="day-panel-head"><h3 id="day-title">—</h3><span id="day-count" class="pill"></span></div>
+          <div id="day-list" class="mini-list"></div>
+        </div>
+      </section>
+
+      <section id="view-sessions" class="view" hidden>
+        <div class="section-head">
+          <div>
+            <h2>All sessions</h2>
+            <p class="section-sub">Newest first. Every session you logged.</p>
+          </div>
+        </div>
+        <div id="session-list" class="card-list"></div>
+      </section>
+    </main>
+
+    <button id="fab" class="fab" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+      <span>Log session</span>
+    </button>
+
+    <nav class="tabbar" aria-label="Sections">
+      <button class="tab active" type="button" data-view="subjects" aria-current="page">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg>
+        <span>Subjects</span>
+      </button>
+      <button class="tab" type="button" data-view="calendar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
+        <span>Calendar</span>
+      </button>
+      <button class="tab" type="button" data-view="sessions">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg>
+        <span>Sessions</span>
+      </button>
+    </nav>
+
+    <div id="sheet" class="backdrop" hidden>
+      <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-title">
+        <div class="sheet-head">
+          <h2 id="sheet-title">—</h2>
+          <button id="sheet-close" class="icon-btn" type="button" aria-label="Close">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+        </div>
+        <div id="sheet-body"></div>
+      </div>
+    </div>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  </div>
+
+  <script src="core.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
